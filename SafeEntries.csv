@@ -1,9 +1,9 @@
-Name,NRIC,Location,Datetime
-Akmal,S98,SIT,16/06/2022 12:17:29
-akmal,98,sit,17/06/2022 16:10:15
-akmal,s98,sit,17/06/2022 16:19:07
-Akmal,s98,sit,17/06/2022 16:26:07
-Akmal,s98,sit,17/06/2022 16:30:59
+Name,NRIC,Location,Datetime
+Akmal,S98,SIT,16/06/2022 12:17:29,Checked-In
+akmal,98,sit,17/06/2022 16:10:15,Checked-In
+akmal,s98,sit,17/06/2022 16:19:07,Checked-In
+Akmal,s98,sit,17/06/2022 16:26:07,Checked-In
+Akmal,s98,sit,17/06/2022 16:30:59,Checked-In
 Akmal,s98,SIT,17/06/2022 16:39:32,Checked-In
 Akmal,s98,sit,17/06/2022 16:40:11,Checked-In
 Name1,s123,sit,17/06/2022 16:40:27,Checked-In

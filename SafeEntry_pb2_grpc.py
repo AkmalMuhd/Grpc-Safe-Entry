@@ -30,6 +30,16 @@ class SafeEntryStub(object):
                 request_serializer=SafeEntry__pb2.Request.SerializeToString,
                 response_deserializer=SafeEntry__pb2.Reply.FromString,
                 )
+        self.Infected = channel.unary_unary(
+                '/SafeEntry.SafeEntry/Infected',
+                request_serializer=SafeEntry__pb2.MOHRequest.SerializeToString,
+                response_deserializer=SafeEntry__pb2.Reply.FromString,
+                )
+        self.InfectedHistory = channel.unary_unary(
+                '/SafeEntry.SafeEntry/InfectedHistory',
+                request_serializer=SafeEntry__pb2.MOHRequest.SerializeToString,
+                response_deserializer=SafeEntry__pb2.Reply.FromString,
+                )
 
 
 class SafeEntryServicer(object):
@@ -54,6 +64,18 @@ class SafeEntryServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Infected(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def InfectedHistory(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_SafeEntryServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -70,6 +92,16 @@ def add_SafeEntryServicer_to_server(servicer, server):
             'CheckInHistory': grpc.unary_unary_rpc_method_handler(
                     servicer.CheckInHistory,
                     request_deserializer=SafeEntry__pb2.Request.FromString,
+                    response_serializer=SafeEntry__pb2.Reply.SerializeToString,
+            ),
+            'Infected': grpc.unary_unary_rpc_method_handler(
+                    servicer.Infected,
+                    request_deserializer=SafeEntry__pb2.MOHRequest.FromString,
+                    response_serializer=SafeEntry__pb2.Reply.SerializeToString,
+            ),
+            'InfectedHistory': grpc.unary_unary_rpc_method_handler(
+                    servicer.InfectedHistory,
+                    request_deserializer=SafeEntry__pb2.MOHRequest.FromString,
                     response_serializer=SafeEntry__pb2.Reply.SerializeToString,
             ),
     }
@@ -130,6 +162,40 @@ class SafeEntry(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/SafeEntry.SafeEntry/CheckInHistory',
             SafeEntry__pb2.Request.SerializeToString,
+            SafeEntry__pb2.Reply.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Infected(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SafeEntry.SafeEntry/Infected',
+            SafeEntry__pb2.MOHRequest.SerializeToString,
+            SafeEntry__pb2.Reply.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def InfectedHistory(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SafeEntry.SafeEntry/InfectedHistory',
+            SafeEntry__pb2.MOHRequest.SerializeToString,
             SafeEntry__pb2.Reply.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -14,12 +14,13 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fSafeEntry.proto\x12\tSafeEntry\" \n\x08Request1\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"Y\n\x07Request\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04nric\x18\x02 \x01(\t\x12\x10\n\x08location\x18\x03 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x04 \x01(\t\x12\x0e\n\x06status\x18\x05 \x01(\t\"V\n\x04List\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04nric\x18\x02 \x01(\t\x12\x10\n\x08location\x18\x03 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x04 \x01(\t\x12\x0e\n\x06status\x18\x05 \x01(\t\")\n\tReplyList\x12\x1c\n\x03res\x18\x01 \x03(\x0b\x32\x0f.SafeEntry.List\"\x14\n\x05Reply\x12\x0b\n\x03res\x18\x01 \x01(\t2\xac\x01\n\tSafeEntry\x12\x31\n\x07\x43heckIn\x12\x12.SafeEntry.Request\x1a\x10.SafeEntry.Reply\"\x00\x12\x32\n\x08\x43heckOut\x12\x12.SafeEntry.Request\x1a\x10.SafeEntry.Reply\"\x00\x12\x38\n\x0e\x43heckInHistory\x12\x12.SafeEntry.Request\x1a\x10.SafeEntry.Reply\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fSafeEntry.proto\x12\tSafeEntry\" \n\x08Request1\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"Y\n\x07Request\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04nric\x18\x02 \x01(\t\x12\x10\n\x08location\x18\x03 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x04 \x01(\t\x12\x0e\n\x06status\x18\x05 \x01(\t\"0\n\nMOHRequest\x12\x10\n\x08location\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x02 \x01(\t\"V\n\x04List\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04nric\x18\x02 \x01(\t\x12\x10\n\x08location\x18\x03 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x04 \x01(\t\x12\x0e\n\x06status\x18\x05 \x01(\t\")\n\tReplyList\x12\x1c\n\x03res\x18\x01 \x03(\x0b\x32\x0f.SafeEntry.List\"\x14\n\x05Reply\x12\x0b\n\x03res\x18\x01 \x01(\t2\xa1\x02\n\tSafeEntry\x12\x31\n\x07\x43heckIn\x12\x12.SafeEntry.Request\x1a\x10.SafeEntry.Reply\"\x00\x12\x32\n\x08\x43heckOut\x12\x12.SafeEntry.Request\x1a\x10.SafeEntry.Reply\"\x00\x12\x38\n\x0e\x43heckInHistory\x12\x12.SafeEntry.Request\x1a\x10.SafeEntry.Reply\"\x00\x12\x35\n\x08Infected\x12\x15.SafeEntry.MOHRequest\x1a\x10.SafeEntry.Reply\"\x00\x12<\n\x0fInfectedHistory\x12\x15.SafeEntry.MOHRequest\x1a\x10.SafeEntry.Reply\"\x00\x62\x06proto3')
 
 
 
 _REQUEST1 = DESCRIPTOR.message_types_by_name['Request1']
 _REQUEST = DESCRIPTOR.message_types_by_name['Request']
+_MOHREQUEST = DESCRIPTOR.message_types_by_name['MOHRequest']
 _LIST = DESCRIPTOR.message_types_by_name['List']
 _REPLYLIST = DESCRIPTOR.message_types_by_name['ReplyList']
 _REPLY = DESCRIPTOR.message_types_by_name['Reply']
@@ -36,6 +37,13 @@ Request = _reflection.GeneratedProtocolMessageType('Request', (_message.Message,
   # @@protoc_insertion_point(class_scope:SafeEntry.Request)
   })
 _sym_db.RegisterMessage(Request)
+
+MOHRequest = _reflection.GeneratedProtocolMessageType('MOHRequest', (_message.Message,), {
+  'DESCRIPTOR' : _MOHREQUEST,
+  '__module__' : 'SafeEntry_pb2'
+  # @@protoc_insertion_point(class_scope:SafeEntry.MOHRequest)
+  })
+_sym_db.RegisterMessage(MOHRequest)
 
 List = _reflection.GeneratedProtocolMessageType('List', (_message.Message,), {
   'DESCRIPTOR' : _LIST,
@@ -66,12 +74,14 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _REQUEST1._serialized_end=62
   _REQUEST._serialized_start=64
   _REQUEST._serialized_end=153
-  _LIST._serialized_start=155
-  _LIST._serialized_end=241
-  _REPLYLIST._serialized_start=243
-  _REPLYLIST._serialized_end=284
-  _REPLY._serialized_start=286
-  _REPLY._serialized_end=306
-  _SAFEENTRY._serialized_start=309
-  _SAFEENTRY._serialized_end=481
+  _MOHREQUEST._serialized_start=155
+  _MOHREQUEST._serialized_end=203
+  _LIST._serialized_start=205
+  _LIST._serialized_end=291
+  _REPLYLIST._serialized_start=293
+  _REPLYLIST._serialized_end=334
+  _REPLY._serialized_start=336
+  _REPLY._serialized_end=356
+  _SAFEENTRY._serialized_start=359
+  _SAFEENTRY._serialized_end=648
 # @@protoc_insertion_point(module_scope)

@@ -21,6 +21,8 @@ service SafeEntry {
   rpc CheckIn (Request) returns (Reply) {}
   rpc CheckOut (Request) returns (Reply) {}
   rpc CheckInHistory (Request) returns (Reply) {}
+  rpc Infected (MOHRequest) returns (Reply) {}
+  rpc InfectedHistory (MOHRequest) returns (Reply) {}
 }
 
 // The request message containing the user's name.
@@ -35,6 +37,11 @@ message Request {
   string location = 3;
   string datetime = 4;
   string status = 5;
+}
+
+message MOHRequest {
+  string location = 1;
+  string datetime = 2;
 }
 
 // The response message containing the greetings
