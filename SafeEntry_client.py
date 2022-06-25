@@ -45,7 +45,7 @@ def run(name,nric):
 
         else: #else, pull the data in the csv into the df
             df_entries = pd.read_csv("SafeEntry_" + nric.lower() + ".csv")
-            print(df_entries)
+            #print(df_entries)
 
         #TODO: initiate the stub
         stub = SafeEntry_pb2_grpc.SafeEntryStub(channel)
@@ -109,6 +109,7 @@ def run(name,nric):
             print("Notifications")
             print("=============================")
             notify(stub, nric)
+            print("=============================")
 
         elif choice == '7':
             print("Goodbye...")
@@ -186,7 +187,7 @@ def history(stub):
 
 def notify(stub,nric):
     response = stub.Notify(SafeEntry_pb2.Request(nric=nric))
-    print(response)
+    print(response.res)
 
 def getCurrentDatetime():
     now = datetime.now()
@@ -198,7 +199,7 @@ def getCurrentDatetime():
 
 if __name__ == '__main__':
     logging.basicConfig()
-    name = input("Name: ")
-    nric = input("NRIC: ")
+    name = "Dennison"#input("Name: ")
+    nric = "s1234" #input("NRIC: ")
     while True:
         run(name, nric)

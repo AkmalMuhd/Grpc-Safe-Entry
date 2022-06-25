@@ -135,21 +135,26 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
     def Notify(self, request, context):
         notification = ""
         nric = request.nric
-        user_entries = df_entries.loc[df_entries['NRIC'].str.lower() == nric.lower()]
 
+        df_entries = pd.read_csv("SafeEntries.csv")
+        df_infected = pd.read_csv("Infected.csv")
+
+        user_entries = df_entries.loc[df_entries['NRIC'].str.lower() == nric.lower()]
+        print(user_entries)
         for ind in user_entries.index:
             location = user_entries['Location'][ind].lower()
-            datetime = datetime.strptime(user_entries['Datetime'][ind], '%d/%m/%Y %H:%M')
+            user_datetime = datetime.strptime(user_entries['Datetime'][ind], '%d/%m/%Y %H:%M')
             infected = df_infected.loc[df_infected['Location'].str.lower() == location]
             for j in infected.index:
                 infected_location = infected['Location'][j].lower()
                 infected_datetime = datetime.strptime(infected['Datetime'][j], '%d/%m/%Y %H:%M')
                 if infected_location == location:
-                    delta = abs((infected_datetime - datetime).days)
+                    delta = abs((infected_datetime - user_datetime).days)
                 if (delta <= 14):
-                    notification += "Possible exposure at " + location + " around " + datetime.strftime(
+                    notification += "Possible exposure at " + location + " around " + user_datetime.strftime(
                         "%d/%m/%Y %H:%M") + "\n"
-
+        if notification=="":
+            notification="No recent exposure"
         return SafeEntry_pb2.Reply(res=notification)
 
 def serve():
