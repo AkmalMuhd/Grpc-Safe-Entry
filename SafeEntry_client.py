@@ -199,7 +199,7 @@ def getCurrentDatetime():
 
 if __name__ == '__main__':
     logging.basicConfig()
-    name = "Dennison"#input("Name: ")
-    nric = "s1234" #input("NRIC: ")
+    name = input("Name: ")
+    nric = input("NRIC: ")
     while True:
         run(name, nric)
