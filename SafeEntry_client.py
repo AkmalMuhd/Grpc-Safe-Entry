@@ -35,15 +35,16 @@ def run(name,nric):
     with grpc.insecure_channel('localhost:50051') as channel:
         #Creating personal SafeEntry records file for clients
         #If csv does not exist, create it
-        if not path.exists("SafeEntry_" + name.lower() + ".csv"):
-            print("Creating SafeEntry_" + name.lower() + ".csv")
+        if not path.exists("SafeEntry_" + nric.lower() + ".csv"):
+            print("Creating SafeEntry_" + nric.lower() + ".csv")
             # Create can.csv and write header
-            with open("SafeEntries.csv", 'w', newline='') as ff:
+            with open("SafeEntry_" + nric.lower() + ".csv", 'w', newline='') as ff:
                 header = ['Name', 'NRIC', 'Location', 'Datetime', 'Status']
                 writer = csv.writer(ff)
                 writer.writerow(header)
+
         else: #else, pull the data in the csv into the df
-            df_entries = pd.read_csv("SafeEntry_" + name.lower() + ".csv")
+            df_entries = pd.read_csv("SafeEntry_" + nric.lower() + ".csv")
             print(df_entries)
 
         #TODO: initiate the stub
@@ -83,7 +84,8 @@ def run(name,nric):
             print("=============================")
             print("Individual Check-out")
             print("=============================")
-            inputDetailsCheckOut(stub)
+            i=0
+            inputDetailsCheckOut(stub,name,nric, i)
 
         elif choice =='4':
             print("=============================")
@@ -92,7 +94,7 @@ def run(name,nric):
             num_grp = input("Enter number of people: ")
             i = 0
             while(i<int(num_grp)):
-                inputDetailsCheckOut(stub)
+                inputDetailsCheckOut(stub,name,nric, i)
                 i+=1
             
 
@@ -123,12 +125,12 @@ def inputDetailsCheckIn(stub,username, userNRIC, i):
         datetime = getCurrentDatetime()
 
     else:
-        name = input("Enter member "+i+" name: ")
-        nric = input("Enter member "+i+" NRIC: ")
-        location = input("Enter member "+i+" Location: ")
+        name = input("Enter member "+str(i)+" name: ")
+        nric = input("Enter member "+str(i)+" NRIC: ")
+        location = input("Enter member "+str(i)+" Location: ")
         datetime = getCurrentDatetime()
 
-    with open("SafeEntries.csv", 'a', newline='') as f:
+    with open("SafeEntry_" + nric.lower() + ".csv", 'a', newline='') as f:
         writer = csv.writer(f)
 
         # Write to CSV
@@ -145,12 +147,21 @@ def inputDetailsCheckIn(stub,username, userNRIC, i):
     print(nric + " checked in")
     print("")
 
-def inputDetailsCheckOut(stub):
+def inputDetailsCheckOut(stub,username, userNRIC, i):
     # Ask for Details
-    name = input("Enter name: ")
-    nric = input("Enter NRIC: ")
-    location = input("Enter Location: ")
-    datetime = getCurrentDatetime()
+    if i == 0:
+        name = username
+        print("Name: " + username)
+        nric = userNRIC
+        print("NRIC: " + userNRIC)
+        location = input("Enter Location: ")
+        datetime = getCurrentDatetime()
+
+    else:
+        name = input("Enter member " + str(i) + " name: ")
+        nric = input("Enter member " + str(i) + " NRIC: ")
+        location = input("Enter member " + str(i) + " Location: ")
+        datetime = getCurrentDatetime()
 
     response = stub.CheckOut(SafeEntry_pb2.Request(name=name, nric=nric, location=location, datetime=datetime))
     print(nric + " checked out")
@@ -181,7 +192,7 @@ def getCurrentDatetime():
     now = datetime.now()
 
     # dd/mm/YY H:M:S
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    dt_string = now.strftime("%d/%m/%Y %H:%M")
     print("Current datetime: ", dt_string)
     return dt_string
 

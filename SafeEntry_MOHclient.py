@@ -23,7 +23,6 @@ import SafeEntry_pb2
 import SafeEntry_pb2_grpc
 import pandas as pd
 from datetime import datetime
-end = 0
 
 
 def run():
@@ -60,7 +59,7 @@ def run():
             InfectedHistory(stub)
         elif choice == '3':
             print("Goodbye...")
-            end += 1
+            quit()
 
 def inputInfectedDetails(stub):
     # Ask for Details
@@ -90,5 +89,5 @@ def InfectedHistory(stub):
 
 if __name__ == '__main__':
     logging.basicConfig()
-    while(end==0):
+    while True:
         run()

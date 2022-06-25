@@ -22,6 +22,7 @@ import SafeEntry_pb2_grpc
 from os import path
 import csv
 import pandas as pd
+from datetime import datetime
 
 df_entries = pd.DataFrame(columns=['Name', 'NRIC', 'Location', 'Datetime','Status'])
 df_infected = pd.DataFrame(columns=['Location','Datetime', 'Status'])
@@ -38,6 +39,8 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
         with open("SafeEntries.csv", 'w', newline='') as ff:
             writer = csv.writer(ff)
             writer.writerow(header)
+    else:  # else, pull the data in the csv into the df
+        df_entries = pd.read_csv("SafeEntries.csv")
 
     if path.exists("Infected.csv") == False:
         print("Creating Infected.csv")
@@ -45,6 +48,9 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
         with open("Infected.csv", 'w', newline='') as ff:
             writer = csv.writer(ff)
             writer.writerow(infectedHeader)
+    else:  # else, pull the data in the csv into the df
+        df_infected = pd.read_csv("Infected.csv")
+
     
     def CheckIn(self, request, context):
         with open("SafeEntries.csv", 'a', newline='') as f:
@@ -127,10 +133,22 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
         return SafeEntry_pb2.Reply(res=result)
 
     def Notify(self, request, context):
-        notification=""
-        nric=request.nric
+        notification = ""
+        nric = request.nric
+        user_entries = df_entries.loc[df_entries['NRIC'].str.lower() == nric.lower()]
 
-
+        for ind in user_entries.index:
+            location = user_entries['Location'][ind].lower()
+            datetime = datetime.strptime(user_entries['Datetime'][ind], '%d/%m/%Y %H:%M')
+            infected = df_infected.loc[df_infected['Location'].str.lower() == location]
+            for j in infected.index:
+                infected_location = infected['Location'][j].lower()
+                infected_datetime = datetime.strptime(infected['Datetime'][j], '%d/%m/%Y %H:%M')
+                if infected_location == location:
+                    delta = abs((infected_datetime - datetime).days)
+                if (delta <= 14):
+                    notification += "Possible exposure at " + location + " around " + datetime.strftime(
+                        "%d/%m/%Y %H:%M") + "\n"
 
         return SafeEntry_pb2.Reply(res=notification)
 
