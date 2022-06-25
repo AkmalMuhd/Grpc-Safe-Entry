@@ -140,6 +140,8 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
         df_infected = pd.read_csv("Infected.csv")
 
         user_entries = df_entries.loc[df_entries['NRIC'].str.lower() == nric.lower()]
+        #Filter to Checked-In only to remove duplicates
+        user_entries = user_entries.loc[user_entries['Status']=="Checked-In"]
         print(user_entries)
         for ind in user_entries.index:
             location = user_entries['Location'][ind].lower()
