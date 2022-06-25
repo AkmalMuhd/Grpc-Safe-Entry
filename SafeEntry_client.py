@@ -22,13 +22,30 @@ import SafeEntry_pb2
 import SafeEntry_pb2_grpc
 from datetime import datetime
 import pandas as pd
-end = 0
+import argparse
+from os import path
+import csv
 
-def run():
+df_entries = pd.DataFrame(columns=['Name', 'NRIC', 'Location', 'Datetime','Status'])
+
+def run(name,nric):
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
     with grpc.insecure_channel('localhost:50051') as channel:
+        #Creating personal SafeEntry records file for clients
+        #If csv does not exist, create it
+        if not path.exists("SafeEntry_" + name.lower() + ".csv"):
+            print("Creating SafeEntry_" + name.lower() + ".csv")
+            # Create can.csv and write header
+            with open("SafeEntries.csv", 'w', newline='') as ff:
+                header = ['Name', 'NRIC', 'Location', 'Datetime', 'Status']
+                writer = csv.writer(ff)
+                writer.writerow(header)
+        else: #else, pull the data in the csv into the df
+            df_entries = pd.read_csv("SafeEntry_" + name.lower() + ".csv")
+            print(df_entries)
+
         #TODO: initiate the stub
         stub = SafeEntry_pb2_grpc.SafeEntryStub(channel)
 
@@ -39,7 +56,8 @@ def run():
         print("3. Individual Check-out")
         print("4. Group Check-out")
         print("5. History")
-        print("6. End")
+        print("6. Notifications")
+        print("7. End")
         print("=============================")
         choice = input("Enter choice: ")
         print("\n")
@@ -48,7 +66,8 @@ def run():
             print("=============================")
             print("Individual Check-in")
             print("=============================")
-            inputDetailsCheckIn(stub)
+            i = 0
+            inputDetailsCheckIn(stub,name, nric, i)
 
         elif choice == '2':
             print("=============================")
@@ -57,7 +76,7 @@ def run():
             num_grp = input("Enter number of people: ")
             i = 0
             while(i<int(num_grp)):
-                inputDetailsCheckIn(stub)
+                inputDetailsCheckIn(stub,name,nric, i)
                 i+=1
 
         elif choice =='3':
@@ -83,16 +102,44 @@ def run():
             print("=============================")
             history(stub)
 
-        elif choice == '6':
-            print("Goodbye...")
-            end += 1
+        elif choice =='6':
+            print("=============================")
+            print("Notifications")
+            print("=============================")
+            notify(stub, nric)
 
-def inputDetailsCheckIn(stub):
+        elif choice == '7':
+            print("Goodbye...")
+            quit()
+
+def inputDetailsCheckIn(stub,username, userNRIC, i):
     # Ask for Details
-    name = input("Enter name: ")
-    nric = input("Enter NRIC: ")
-    location = input("Enter Location: ")
-    datetime = getCurrentDatetime()
+    if i==0:
+        name=username
+        print("Name: "+username)
+        nric = userNRIC
+        print("NRIC: " + userNRIC)
+        location = input("Enter Location: ")
+        datetime = getCurrentDatetime()
+
+    else:
+        name = input("Enter member "+i+" name: ")
+        nric = input("Enter member "+i+" NRIC: ")
+        location = input("Enter member "+i+" Location: ")
+        datetime = getCurrentDatetime()
+
+    with open("SafeEntries.csv", 'a', newline='') as f:
+        writer = csv.writer(f)
+
+        # Write to CSV
+        row = [name, nric, location, datetime, "Checked-In"]
+        writer.writerow(row)
+        f.flush()
+
+    # Add new row to df_entries Dataframe
+    df_entries.loc[len(df_entries)] = row
+    print(df_entries)
+    print("")
 
     response = stub.CheckIn(SafeEntry_pb2.Request(name=name, nric=nric, location=location, datetime=datetime))
     print(nric + " checked in")
@@ -126,6 +173,10 @@ def history(stub):
     print(df_entries)
     print("")
 
+def notify(stub,nric):
+    response = stub.Notify(SafeEntry_pb2.Request(nric=nric))
+    print(response)
+
 def getCurrentDatetime():
     now = datetime.now()
 
@@ -136,5 +187,7 @@ def getCurrentDatetime():
 
 if __name__ == '__main__':
     logging.basicConfig()
-    while(end==0):
-        run()
+    name = input("Name: ")
+    nric = input("NRIC: ")
+    while True:
+        run(name, nric)

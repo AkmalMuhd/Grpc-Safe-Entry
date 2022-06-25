@@ -126,6 +126,14 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
             print(result)
         return SafeEntry_pb2.Reply(res=result)
 
+    def Notify(self, request, context):
+        notification=""
+        nric=request.nric
+
+
+
+        return SafeEntry_pb2.Reply(res=notification)
+
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     SafeEntry_pb2_grpc.add_SafeEntryServicer_to_server(SafeEntry(), server)

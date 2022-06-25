@@ -23,6 +23,8 @@ service SafeEntry {
   rpc CheckInHistory (Request) returns (Reply) {}
   rpc Infected (MOHRequest) returns (Reply) {}
   rpc InfectedHistory (MOHRequest) returns (Reply) {}
+
+  rpc Notify (Request) returns (Reply) {}
 }
 
 // The request message containing the user's name.
