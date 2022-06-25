@@ -1,0 +1,5 @@
+Name,NRIC,Location,Datetime,Status
+Dennison,s1234,nyp,26/06/2022 00:22,Checked-In
+Dennison,s1234,tampines,26/06/2022 00:23,Checked-In
+Dennison,s1234,pasir ris,26/06/2022 00:23,Checked-In
+5,s1234,pasir ris,26/06/2022 02:02,Checked-Out

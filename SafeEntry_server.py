@@ -39,6 +39,7 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
         with open("SafeEntries.csv", 'w', newline='') as ff:
             writer = csv.writer(ff)
             writer.writerow(header)
+    # dk if the else statement does anyt
     else:  # else, pull the data in the csv into the df
         df_entries = pd.read_csv("SafeEntries.csv")
 
@@ -48,6 +49,8 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
         with open("Infected.csv", 'w', newline='') as ff:
             writer = csv.writer(ff)
             writer.writerow(infectedHeader)
+
+    #dk if the else statement does anyt
     else:  # else, pull the data in the csv into the df
         df_infected = pd.read_csv("Infected.csv")
 
@@ -122,6 +125,7 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
         return SafeEntry_pb2.Reply(res=MOHrequest.location + " has been infected")
 
     def InfectedHistory(self, MOHrequest, context):
+        df_infected = pd.read_csv("Infected.csv")
         result = ""
         for i in range(len(df_infected)):
             print(i)

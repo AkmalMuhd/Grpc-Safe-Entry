@@ -43,10 +43,6 @@ def run(name,nric):
                 writer = csv.writer(ff)
                 writer.writerow(header)
 
-        else: #else, pull the data in the csv into the df
-            df_entries = pd.read_csv("SafeEntry_" + nric.lower() + ".csv")
-            #print(df_entries)
-
         #TODO: initiate the stub
         stub = SafeEntry_pb2_grpc.SafeEntryStub(channel)
 
@@ -164,12 +160,25 @@ def inputDetailsCheckOut(stub,username, userNRIC, i):
         location = input("Enter member " + str(i) + " Location: ")
         datetime = getCurrentDatetime()
 
+    with open("SafeEntry_" + nric.lower() + ".csv", 'a', newline='') as f:
+        writer = csv.writer(f)
+
+        # Write to CSV
+        row = [name, nric, location, datetime, "Checked-Out"]
+        writer.writerow(row)
+        f.flush()
+
+    # Add new row to df_entries Dataframe
+    df_entries.loc[len(df_entries)] = row
+    print(df_entries)
+    print("")
+
     response = stub.CheckOut(SafeEntry_pb2.Request(name=name, nric=nric, location=location, datetime=datetime))
     print(nric + " checked out")
     print("")
 
 def history(stub):
-    df_entries = pd.DataFrame(columns=['Name', 'NRIC', 'Location', 'Datetime','Status'])
+    df_entries = pd.read_csv("SafeEntry_" + nric.lower() + ".csv")
     response = stub.CheckInHistory(SafeEntry_pb2.Request())
     temp = response.res.split(',')
     row = []
