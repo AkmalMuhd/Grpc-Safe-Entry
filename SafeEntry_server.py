@@ -41,6 +41,7 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
             writer.writerow(header)
     # dk if the else statement does anyt
     else:  # else, pull the data in the csv into the df
+        global df_entries
         df_entries = pd.read_csv("SafeEntries.csv")
 
     if path.exists("Infected.csv") == False:
@@ -73,40 +74,62 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
 
     def CheckOut(self, request, context):
         result = ""
+        found = 0
         # iterate through dataframe
-        for i in range(len(df_entries)):
-            # check if nric and location is in dataframe
-            if request.nric == df_entries.loc[i, "NRIC"] and request.location == df_entries.loc[i, "Location"]:
-                # check if status is "Checked in"
-                if df_entries.loc[i,"Status"] == "Checked-Out":
-                    result = request.nric + "already checked out from " + request.location
-                
-                elif df_entries.loc[i,"Status"] == "Checked-In":
-                    row = [request.name, request.nric, request.location, request.datetime, "Checked-Out"]
-                    # add new row with status = Checked-out and check out timing
-                    df_entries.loc[len(df_entries)] = row
-                    print(df_entries)
-                    result = request.nric + "Checked out"
-            else:
-                result = request.nric + "not checked-in into " + request.location
+        if len(df_entries) != 0:
+            print("len is "+str(len(df_entries)))
+            for i in reversed(range(len(df_entries))):
+                # print(i)
+                # check if nric and location is in dataframe
+                if request.nric == df_entries.loc[i, "NRIC"] and request.location == df_entries.loc[i, "Location"]:
+                    # check if status is "Checked out"
+                    if df_entries.loc[i,"Status"] == "Checked-Out":
+                        result = request.nric + " already checked out from " + request.location
+                        found = 1
+                        return SafeEntry_pb2.Reply(res=result)
+                    
+                    # check if status is "Checked in"
+                    elif df_entries.loc[i,"Status"] == "Checked-In":
+                        print("here")
+                        row = [request.name, request.nric, request.location, request.datetime, "Checked-Out"]
+                        # add new row with status = Checked-out and check out timing
+                        df_entries.loc[len(df_entries)] = row
+                        print(df_entries)
+                        result = request.nric + " Checked out"
+                        print("im here")
+                        
+                        with open("SafeEntries.csv", 'a', newline='') as f:
+                            writer = csv.writer(f)
 
-        return SafeEntry_pb2.Reply(res=result)
+                            # Write to CSV
+                            writer.writerow(row)
+                            f.flush()
+                        return SafeEntry_pb2.Reply(res=result)
+                else:
+                    result = request.nric + " not checked-in into " + request.location
+                    return SafeEntry_pb2.Reply(res=result)
+        else:
+            result = request.nric + " not checked-in into " + request.location
+            return SafeEntry_pb2.Reply(res=result)
 
-    def CheckInHistory(self, request, context):
-        result = ""
-        for i in range(len(df_entries)):
-            print(i)
-            if i == 0:
-                result = df_entries.loc[i, "Name"] +","+ df_entries.loc[i, "NRIC"] +","+ df_entries.loc[i, "Location"] +","+ df_entries.loc[i, "Datetime"] +","+ df_entries.loc[i, "Status"]
-            else:
-                result =  result +","+ df_entries.loc[i, "Name"] +","+ df_entries.loc[i, "NRIC"] +","+ df_entries.loc[i, "Location"] +","+ df_entries.loc[i, "Datetime"] +","+ df_entries.loc[i, "Status"]
-            # result.append(df_entries.loc[i, "Name"])
-            # result.append(df_entries.loc[i, "NRIC"])
-            # result.append(df_entries.loc[i, "Location"])
-            # result.append(df_entries.loc[i, "Datetime"])
-            # result.append(df_entries.loc[i, "Status"])
-            print(result)
-        return SafeEntry_pb2.Reply(res=result)
+
+        
+
+    # def CheckInHistory(self, request, context):
+    #     result = ""
+    #     for i in range(len(df_entries)):
+    #         print(i)
+    #         if i == 0:
+    #             result = df_entries.loc[i, "Name"] +","+ df_entries.loc[i, "NRIC"] +","+ df_entries.loc[i, "Location"] +","+ df_entries.loc[i, "Datetime"] +","+ df_entries.loc[i, "Status"]
+    #         else:
+    #             result =  result +","+ df_entries.loc[i, "Name"] +","+ df_entries.loc[i, "NRIC"] +","+ df_entries.loc[i, "Location"] +","+ df_entries.loc[i, "Datetime"] +","+ df_entries.loc[i, "Status"]
+    #         # result.append(df_entries.loc[i, "Name"])
+    #         # result.append(df_entries.loc[i, "NRIC"])
+    #         # result.append(df_entries.loc[i, "Location"])
+    #         # result.append(df_entries.loc[i, "Datetime"])
+    #         # result.append(df_entries.loc[i, "Status"])
+    #         print(result)
+    #     return SafeEntry_pb2.Reply(res=result)
 
     def Infected(self, MOHrequest, context):
         with open("Infected.csv", 'a', newline='') as f:
