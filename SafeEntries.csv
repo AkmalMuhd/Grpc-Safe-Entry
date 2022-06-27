@@ -1,0 +1,7 @@
+Name,NRIC,Location,Datetime,Status
+Akmal,S1234567A,nyp,27/06/2022 23:30,Checked-In
+Akmal,S1234567A,nyp,27/06/2022 23:30,Checked-Out
+Akmal,S1234567A,tp,27/06/2022 23:30,Checked-In
+Dennison,S7654321Z,tp,27/06/2022 23:30,Checked-In
+Akmal,S1234567A,tp,27/06/2022 23:31,Checked-Out
+Dennison,S7654321Z,tp,27/06/2022 23:31,Checked-Out

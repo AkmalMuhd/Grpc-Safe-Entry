@@ -1,7 +1,5 @@
 from __future__ import print_function
-
 import logging
-
 import grpc
 import SafeEntry_pb2
 import SafeEntry_pb2_grpc
@@ -10,12 +8,10 @@ import pandas as pd
 from os import path
 import csv
 
+# Declare Dataframes to store SafeEntry entries
 df_entries = pd.DataFrame(columns=['Name', 'NRIC', 'Location', 'Datetime','Status'])
 
 def run(name,nric):
-    # NOTE(gRPC Python Team): .close() is possible on a channel and should be
-    # used in circumstances in which the with statement does not fit the needs
-    # of the code.
     with grpc.insecure_channel('localhost:50051') as channel:
         #Creating personal SafeEntry records file for clients
         #If csv does not exist, create it
@@ -31,10 +27,10 @@ def run(name,nric):
             global df_entries
             df_entries = pd.read_csv("SafeEntry_" + nric.lower() + ".csv")
 
-        #TODO: initiate the stub
+        # Initiate the stub
         stub = SafeEntry_pb2_grpc.SafeEntryStub(channel)
 
-        #Main menu
+        # Main menu
         print("=============================")
         print("1. Individual Check-in")
         print("2. Group Check-in")
@@ -81,7 +77,6 @@ def run(name,nric):
                 inputDetailsCheckOut(stub,name,nric, i)
                 i+=1
             
-
         elif choice =='5':
             print("=============================")
             print("History")
@@ -149,9 +144,7 @@ def inputDetailsCheckOut(stub,username, userNRIC, i):
         location = input("Enter member " + str(i) + " Location: ")
         datetime = getCurrentDatetime()
 
-
     response = stub.CheckOut(SafeEntry_pb2.Request(name=name, nric=nric, location=location, datetime=datetime))
-    
 
     Result = str(response)[6:-2]
     if "Checked out" in Result:
