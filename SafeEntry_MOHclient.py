@@ -22,7 +22,6 @@ import grpc
 import SafeEntry_pb2
 import SafeEntry_pb2_grpc
 import pandas as pd
-from datetime import datetime
 
 
 def run():
@@ -64,10 +63,11 @@ def run():
 def inputInfectedDetails(stub):
     # Ask for Details
     location = input("Enter Location: ")
-    datetime = input("Enter Visit Date and Time (dd/mm/YY H:M:S): ")
+    datetime = input("Enter Visit Date and Time (dd/mm/YYYY H:M): ")
     print(datetime)
 
     response = stub.Infected(SafeEntry_pb2.MOHRequest(location=location, datetime=datetime))
+    return response
 
 
 def InfectedHistory(stub):

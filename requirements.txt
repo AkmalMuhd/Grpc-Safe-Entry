@@ -1,0 +1,4 @@
+grpc==1.0.0
+grpcio==1.47.0
+pandas==1.4.2
+protobuf==4.21.2

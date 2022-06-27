@@ -22,7 +22,6 @@ import SafeEntry_pb2
 import SafeEntry_pb2_grpc
 from datetime import datetime
 import pandas as pd
-import argparse
 from os import path
 import csv
 
@@ -167,9 +166,6 @@ def inputDetailsCheckOut(stub,username, userNRIC, i):
 
 
     response = stub.CheckOut(SafeEntry_pb2.Request(name=name, nric=nric, location=location, datetime=datetime))
-    # print(str(response))
-    # print(str(response)[6:-2])
-    # print(nric + " checked out")
     
 
     Result = str(response)[6:-2]
@@ -195,19 +191,6 @@ def inputDetailsCheckOut(stub,username, userNRIC, i):
     print("")
 
 def history(stub):
-    # df_entries = pd.read_csv("SafeEntry_" + nric.lower() + ".csv")
-    # response = stub.CheckInHistory(SafeEntry_pb2.Request())
-    # temp = response.res.split(',')
-    # row = []
-    # count = 0
-    # for i in temp:
-    #     row.append(i)
-    #     count+=1
-    #     if count == 5:
-    #         df_entries.loc[len(df_entries)] = row
-    #         row = []
-    #         count = 0
-
     print(df_entries)
     print("")
 
@@ -218,7 +201,7 @@ def notify(stub,nric):
 def getCurrentDatetime():
     now = datetime.now()
 
-    # dd/mm/YY H:M:S
+    # dd/mm/YY H:M
     dt_string = now.strftime("%d/%m/%Y %H:%M")
     print("Current datetime: ", dt_string)
     return dt_string
