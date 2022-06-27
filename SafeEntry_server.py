@@ -1,18 +1,3 @@
-# Copyright 2015 gRPC authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""The Python implementation of the GRPC helloworld.Greeter server."""
-
 from concurrent import futures
 import logging
 
@@ -24,6 +9,7 @@ import csv
 import pandas as pd
 from datetime import datetime
 
+# Declare Dataframes to store SafeEntry entries and Infected Location separately 
 df_entries = pd.DataFrame(columns=['Name', 'NRIC', 'Location', 'Datetime','Status'])
 df_infected = pd.DataFrame(columns=['Location','Datetime', 'Status'])
 
@@ -39,8 +25,9 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
         with open("SafeEntries.csv", 'w', newline='') as ff:
             writer = csv.writer(ff)
             writer.writerow(header)
-    # dk if the else statement does anyt
-    else:  # else, pull the data in the csv into the df
+
+    # else, pull the data in the csv into the df
+    else:  
         global df_entries
         df_entries = pd.read_csv("SafeEntries.csv")
 
@@ -51,11 +38,10 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
             writer = csv.writer(ff)
             writer.writerow(infectedHeader)
 
-    #dk if the else statement does anyt
-    else:  # else, pull the data in the csv into the df
+    # else, pull the data in the csv into the df        
+    else:  
         df_infected = pd.read_csv("Infected.csv")
 
-    
     def CheckIn(self, request, context):
         with open("SafeEntries.csv", 'a', newline='') as f:
             writer = csv.writer(f)
@@ -74,30 +60,25 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
 
     def CheckOut(self, request, context):
         result = ""
-        found = 0
+        print(df_entries)
         # iterate through dataframe
         if len(df_entries) != 0:
-            print("len is "+str(len(df_entries)))
             for i in reversed(range(len(df_entries))):
-                # print(i)
+                
                 # check if nric and location is in dataframe
-                if request.nric == df_entries.loc[i, "NRIC"] and request.location == df_entries.loc[i, "Location"]:
+                if request.nric.lower() == df_entries.loc[i, "NRIC"].lower() and request.location.lower() == df_entries.loc[i, "Location"].lower():
+                    
                     # check if status is "Checked out"
                     if df_entries.loc[i,"Status"] == "Checked-Out":
                         result = request.nric + " already checked out from " + request.location
-                        found = 1
                         return SafeEntry_pb2.Reply(res=result)
                     
                     # check if status is "Checked in"
                     elif df_entries.loc[i,"Status"] == "Checked-In":
-                        print("here")
                         row = [request.name, request.nric, request.location, request.datetime, "Checked-Out"]
                         # add new row with status = Checked-out and check out timing
                         df_entries.loc[len(df_entries)] = row
-                        print(df_entries)
                         result = request.nric + " Checked out"
-                        print("im here")
-                        
                         with open("SafeEntries.csv", 'a', newline='') as f:
                             writer = csv.writer(f)
 
@@ -105,31 +86,9 @@ class SafeEntry(SafeEntry_pb2_grpc.SafeEntryServicer):
                             writer.writerow(row)
                             f.flush()
                         return SafeEntry_pb2.Reply(res=result)
-                else:
-                    result = request.nric + " not checked-in into " + request.location
-                    return SafeEntry_pb2.Reply(res=result)
         else:
             result = request.nric + " not checked-in into " + request.location
             return SafeEntry_pb2.Reply(res=result)
-
-
-        
-
-    # def CheckInHistory(self, request, context):
-    #     result = ""
-    #     for i in range(len(df_entries)):
-    #         print(i)
-    #         if i == 0:
-    #             result = df_entries.loc[i, "Name"] +","+ df_entries.loc[i, "NRIC"] +","+ df_entries.loc[i, "Location"] +","+ df_entries.loc[i, "Datetime"] +","+ df_entries.loc[i, "Status"]
-    #         else:
-    #             result =  result +","+ df_entries.loc[i, "Name"] +","+ df_entries.loc[i, "NRIC"] +","+ df_entries.loc[i, "Location"] +","+ df_entries.loc[i, "Datetime"] +","+ df_entries.loc[i, "Status"]
-    #         # result.append(df_entries.loc[i, "Name"])
-    #         # result.append(df_entries.loc[i, "NRIC"])
-    #         # result.append(df_entries.loc[i, "Location"])
-    #         # result.append(df_entries.loc[i, "Datetime"])
-    #         # result.append(df_entries.loc[i, "Status"])
-    #         print(result)
-    #     return SafeEntry_pb2.Reply(res=result)
 
     def Infected(self, MOHrequest, context):
         with open("Infected.csv", 'a', newline='') as f:
